@@ -8,10 +8,10 @@ jobs:
     steps:
       - name: cd rep1
         run:  cd /home/vd/Trimiata/Trimiata_test/test_cicd/ && git fetch
-      - name: fetch
-        run: git fetch
+      #- name: fetch
+       # run: git fetch
       - name: pull
-        run: git pull
+        run: cd /home/vd/Trimiata/Trimiata_test/test_cicd/ && git pull
       - name: cd docker
         run: cd /home/vd/Trimiata/Trimiata_test/test_cicd/docker/
       - name: stop docker
