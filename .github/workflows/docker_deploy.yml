@@ -6,16 +6,10 @@ jobs:
   prepare-env:
     runs-on: self-hosted
     steps:
-      - name: cd rep1
+      - name: git
         run:  cd /home/vd/Trimiata/Trimiata_test/test_cicd/ && git fetch && git pull
-      #- name: fetch
-       # run: git fetch
-      #- name: pull
-       # run: cd /home/vd/Trimiata/Trimiata_test/test_cicd/ && git pull
-      - name: cd docker
-        run: cd /home/vd/Trimiata/Trimiata_test/test_cicd/docker/
-      - name: stop docker
-        run: docker compose down
-      - name: build docker
-        run: docker compose up --build -d
+      - name: docker down
+        run: cd /home/vd/Trimiata/Trimiata_test/test_cicd/docker/ && docker compose down
+      - name: docker build
+        run: cd /home/vd/Trimiata/Trimiata_test/test_cicd/docker/ &&docker compose up --build -d
         
