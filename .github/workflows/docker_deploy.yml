@@ -6,7 +6,7 @@ jobs:
   prepare-env:
     runs-on: self-hosted
     steps:
-      - name: cd rep
+      - name: cd rep1
         run:  cd /home/vd/Trimiata/Trimiata_test/test_cicd/ && git fetch
       - name: fetch
         run: git fetch
