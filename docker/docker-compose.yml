@@ -1,0 +1,128 @@
+version: '3.3'
+
+volumes:
+  site:
+  db:
+    driver: local
+
+services:
+    php:
+        build: php
+        container_name: php
+        volumes:
+            - ./logs/nginx:/var/log/nginx
+            - ./logs/php:/var/log/php
+            - ./logs/db:/var/log/mysql
+            - ./logs/memcached:/var/log/memcached
+            - ./data/memcached:/var/lib/memcached
+            - ./www/html:/var/www/html
+            - ../bitrix:/var/www/bitrix
+            - db:/var/lib/mysql
+        ports:
+            - '9000:9000'
+        links:
+            - db
+            - memcached
+        networks:
+            - bitrix
+        restart: always
+
+    nginx:
+        build: nginx
+        container_name: nginx
+        depends_on:
+            - source
+        volumes:
+            - ./logs/nginx:/var/log/nginx
+            - ./logs/php:/var/log/php
+            - ./logs/db:/var/log/mysql
+            - ./logs/memcached:/var/log/memcached
+            - ./data/memcached:/var/lib/memcached
+            - ./www/html:/var/www/html
+            - ../bitrix:/var/www/bitrix
+            - db:/var/lib/mysql
+        ports:
+            - '80:80'
+            - '443:443'
+        links:
+            - php
+        networks:
+            - bitrix
+        restart: always
+
+    db:
+        build: mysql
+        container_name: db
+        volumes:
+            - ./logs/nginx:/var/log/nginx
+            - ./logs/php:/var/log/php
+            - ./logs/db:/var/log/mysql
+            - ./logs/memcached:/var/log/memcached
+            - ./data/memcached:/var/lib/memcached
+            - ./www/html:/var/www/html
+            - ../bitrix:/var/www/bitrix
+            - db:/var/lib/mysql
+        ports:
+            - '3306:3306'
+        environment:
+            MYSQL_DATABASE: bitrix
+            MYSQL_USER: bitrix
+            MYSQL_PASSWORD: Sdmcj123
+            MYSQL_ROOT_PASSWORD: Sdmcj123
+        command: mysqld --sql-mode=""
+        networks:
+            - bitrix
+        restart: always
+
+    memcached:
+        image: memcached:1.5-alpine
+        container_name: memcached
+        volumes:
+            - ./logs/nginx:/var/log/nginx
+            - ./logs/php:/var/log/php
+            - ./logs/db:/var/log/mysql
+            - ./logs/memcached:/var/log/memcached
+            - ./data/memcached:/var/lib/memcached
+            - ./www/html:/var/www/html
+            - ../bitrix:/var/www/bitrix
+            - db:/var/lib/mysql
+        ports:
+            - '11211:11211'
+        networks:
+            - bitrix
+        restart: always
+
+    adminer:
+        image: dockette/adminer:full
+        container_name: adminer
+        links:
+            - db:db
+        ports:
+            - '8080:80'
+        environment:
+            UPLOAD: 1024M # upload_max_filesize, post_max_size
+        networks:
+            - bitrix
+
+    source:
+        image: alpine:latest
+        container_name: source
+        volumes:
+            - ./logs/nginx:/var/log/nginx
+            - ./logs/php:/var/log/php
+            - ./logs/db:/var/log/mysql
+            - ./logs/memcached:/var/log/memcached
+            - ./data/memcached:/var/lib/memcached
+            - ./www/html:/var/www/html
+            - ../bitrix:/var/www/bitrix
+            - db:/var/lib/mysql
+        networks:
+            - bitrix
+
+networks:
+    bitrix:
+        driver: bridge
+        ipam:
+            driver: default
+            config:
+                - subnet: 10.100.0.0/24
