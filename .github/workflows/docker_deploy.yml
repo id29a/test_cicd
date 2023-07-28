@@ -1,0 +1,18 @@
+name: Deploy buy runner
+on:
+  push:
+    branches: [ "stage" ]
+jobs:
+  prepare-env:
+    runs-on: self-hosted
+    steps:
+      - name: cd rep
+        run:  cd /home/vd/Trimiata/Trimiata_test/test_cicd/
+      - name: fetch
+        run: git fetch
+      - name: cd docker
+        run: cd /home/vd/Trimiata/Trimiata_test/test_cicd/docker/
+      - name: stop docker
+        run: docker compose down
+      - name: build docker
+        run: docker compose up --build -d
